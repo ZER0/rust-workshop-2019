@@ -1,17 +1,15 @@
+import * as wasm from "./wasm.js";
 import * as webgl from "./webgl.js";
 
-let canvas = document.getElementById("canvas");
-let gl = canvas.getContext("webgl");
-let vertices = [
-    -0.5, -0.5, 0.0,
-     0.5, -0.5, 0.0,
-    -0.5,  0.5, 0.0,
-    -0.5,  0.5, 0.0,
-     0.5, -0.5, 0.0,
-     0.5,  0.5, 0.0,
-];
-let { render } = webgl.init(gl, vertices);
-requestAnimationFrame(function renderFrame() {
-  render();
-  requestAnimationFrame(renderFrame);
-});
+export async function main() {
+  let { generateVertices } = await wasm.init("../target/wasm32-unknown-unknown/debug/wasm.wasm");
+  let canvas = document.getElementById("canvas");
+  let gl = canvas.getContext("webgl");
+  let { render } = webgl.init(gl, generateVertices());
+  requestAnimationFrame(function renderFrame() {
+    render();
+    requestAnimationFrame(renderFrame);
+  });
+}
+
+main();
