@@ -7,7 +7,7 @@ export async function main() {
     "../target/wasm32-unknown-unknown/release/wasm.wasm"
   );
   let now = Date.now();
-  let vertices = sierpinskiWasm(10);
+  let vertices = sierpinskiWasm(8);
   console.log(Date.now() - now);
   let canvas = document.getElementById("canvas");
   let gl = canvas.getContext("webgl");

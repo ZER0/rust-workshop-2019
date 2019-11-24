@@ -1,18 +1,9 @@
 use crate::sierpinski;
 use std::mem;
 
-macro_rules! println {
-    ($($arg:tt)*) => ({
-        let string = std::format_args!($($arg)*).to_string();
-        #[allow(unused_unsafe)]
-        unsafe {
-            $crate::wasm::console_log(string.as_ptr() as u32, string.len() as u32)
-        };
-    })
-}
-
 extern "C" {
-    fn console_log(data: u32, len: u32);
+    #[allow(dead_code)]
+    pub fn console_log(data: u32, len: u32);
 }
 
 #[no_mangle]
