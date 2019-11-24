@@ -20,7 +20,7 @@ const FRAGMENT_SHADER_SOURCE = `
 `;
 
 export function init(gl, vertices) {
-  function render() {
+  function renderVertices() {
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.useProgram(program);
       gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
@@ -63,5 +63,5 @@ export function init(gl, vertices) {
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
-  return { render };
+  return { renderVertices };
 }
