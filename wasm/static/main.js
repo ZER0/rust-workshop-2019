@@ -1,16 +1,20 @@
-import * as wasm from "./wasm.js";
-import * as webgl from "./webgl.js";
+import { init as initWasm } from "./wasm.js";
+import { init as initWebgl } from "./webgl.js";
+import { sierpinski as sierpinskiJs } from "./sierpinski.js";
 
 export async function main() {
-  let { sierpinski } = await wasm.init(
-    "../target/wasm32-unknown-unknown/debug/wasm.wasm"
+  let { sierpinski: sierpinskiWasm } = await initWasm(
+    "../target/wasm32-unknown-unknown/release/wasm.wasm"
   );
+  let now = Date.now();
+  let vertices = sierpinskiWasm(10);
+  console.log(Date.now() - now);
   let canvas = document.getElementById("canvas");
   let gl = canvas.getContext("webgl");
-  let { render } = webgl.init(gl, sierpinski(8));
-  requestAnimationFrame(function renderFrame() {
+  let { render } = initWebgl(gl, vertices);
+  requestAnimationFrame(function frame() {
     render();
-    requestAnimationFrame(renderFrame);
+    requestAnimationFrame(frame);
   });
 }
 
