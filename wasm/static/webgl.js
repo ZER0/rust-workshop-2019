@@ -1,12 +1,16 @@
+import { mat4, vec3 } from "./math.js";
+
 const VERTEX_SHADER_SOURCE = `
-    attribute vec3 aPosition;
+  uniform mat4 uModelViewMatrix;
+  
+  attribute vec3 aPosition;
 
-    varying vec3 vColor;
+  varying vec3 vColor;
 
-    void main() {
-	gl_Position = vec4(aPosition, 1.0);
-	vColor = aPosition * 0.5 + 0.5;
-    }
+  void main() {
+    gl_Position = uModelViewMatrix * vec4(aPosition, 1.0);
+    vColor = aPosition * 0.5 + 0.5;
+  }
 `;
 
 const FRAGMENT_SHADER_SOURCE = `
@@ -21,8 +25,18 @@ const FRAGMENT_SHADER_SOURCE = `
 
 export function init(gl, vertices) {
   function render() {
+    let currentTime = Date.now();
+    let deltaTime = currentTime - previousTime;
+    previousTime = currentTime;
+    mat4.rotate(
+      modelViewMatrix,
+      modelViewMatrix,
+      deltaTime * 0.2 * Math.PI / 1000.0,
+      vec3.fromValues(1.0, 2.0, 3.0)
+    );
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.useProgram(program);
+    gl.uniformMatrix4fv(modelViewMatrixUniform, false, modelViewMatrix);
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.enableVertexAttribArray(positionAttribute);
     gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, gl.FALSE, 0, 0);
@@ -58,10 +72,16 @@ export function init(gl, vertices) {
     compileShader(gl.VERTEX_SHADER, VERTEX_SHADER_SOURCE),
     compileShader(gl.FRAGMENT_SHADER, FRAGMENT_SHADER_SOURCE)
   );
+  let modelViewMatrixUniform = gl.getUniformLocation(
+    program,
+    "uModelViewMatrix"
+  );
   let positionAttribute = gl.getAttribLocation(program, "aPosition");
   let vertexBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  let previousTime = Date.now();
+  let modelViewMatrix = mat4.create();
   return { render };
 }
