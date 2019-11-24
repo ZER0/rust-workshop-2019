@@ -5,8 +5,8 @@ export async function init(url) {
     );
   }
 
-  function generateVertices() {
-    let raw_parts = exports.generate_vertices();
+  function sierpinski(level) {
+    let raw_parts = exports.sierpinski(level);
     let int32Memory = new Int32Array(exports.memory.buffer);
     let ptr = int32Memory[raw_parts / 4 + 0];
     let len = int32Memory[raw_parts / 4 + 1];
@@ -24,5 +24,5 @@ export async function init(url) {
     env: { console_log: consoleLog }
   });
   let { exports } = result.instance;
-  return { generateVertices };
+  return { sierpinski };
 }
