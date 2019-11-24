@@ -1,7 +1,7 @@
 export async function init(url) {
-  function println(data, len) {
-    let str = decoder.decode(
-      new Uint8Array(wasm.memory.buffer, data, len)
+  function consoleLog(data, len) {
+    console.log(
+      decoder.decode(new Uint8Array(exports.memory.buffer, data, len))
     );
   }
 
@@ -20,7 +20,9 @@ export async function init(url) {
   let decoder = new TextDecoder("utf-8", { ignoreBOM: true, fatal: true });
   let response = await fetch(url);
   let buffer = await response.arrayBuffer();
-  let result = await WebAssembly.instantiate(buffer, {});
+  let result = await WebAssembly.instantiate(buffer, {
+    env: { console_log: consoleLog }
+  });
   let { exports } = result.instance;
   return { generateVertices };
 }
