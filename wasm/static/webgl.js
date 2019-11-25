@@ -34,7 +34,7 @@ export function init(gl, vertices) {
       deltaTime * 0.2 * Math.PI / 1000.0,
       vec3.fromValues(1.0, 2.0, 3.0)
     );
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.useProgram(program);
     gl.uniformMatrix4fv(modelViewMatrixUniform, false, modelViewMatrix);
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
