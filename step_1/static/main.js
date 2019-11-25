@@ -4,7 +4,7 @@ import { sierpinski as sierpinskiJs } from "./sierpinski.js";
 
 export async function main() {
   let { sierpinski: sierpinskiWasm } = await initWasm(
-    "../target/wasm32-unknown-unknown/release/wasm.wasm"
+    "/rust_workshop/target/wasm32-unknown-unknown/release/step_1_wasm.wasm"
   );
   let now = Date.now();
   let vertices = sierpinskiWasm(8);
