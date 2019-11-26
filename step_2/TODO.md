@@ -29,6 +29,11 @@
             );
         }
 
+* In the file `/step_2/src/lib.rs`, add the following lines:
+
+      #![macro_use]
+      mod macros;
+
 * In the file `/step_2/static/wasm.js`, in the function `main`, add the following lines:
 
       function consoleLog(data, len) {

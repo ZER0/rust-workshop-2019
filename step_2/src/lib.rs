@@ -1,8 +1,5 @@
 #![allow(dead_code)]
 
-#![macro_use]
-mod macros;
-
 extern "C" {
     fn alert(level: u32);
 }
