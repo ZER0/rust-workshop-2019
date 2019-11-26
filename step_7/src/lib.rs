@@ -13,7 +13,11 @@ extern "C" {
     pub fn console_log(data: u32, len: u32);
 }
 
+#[cfg(not(target_arch = "wasm32"))]
+pub use sierpinski::sierpinski;
+
 #[no_mangle]
+#[cfg(target_arch = "wasm32")]
 pub extern "C" fn sierpinski(level: u32) -> u32 {
     unsafe { vec_f32_into_js(sierpinski::sierpinski(level)) }
 }
@@ -33,4 +37,3 @@ unsafe fn vec_f32_into_js(mut vec: Vec<f32>) -> u32 {
     mem::forget(vec);
     Box::into_raw(raw_parts) as u32
 }
-

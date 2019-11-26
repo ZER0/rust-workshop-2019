@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "native",
     "step_2",
     "step_3",
     "step_4",
