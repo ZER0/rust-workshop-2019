@@ -1,5 +1,5 @@
 import { init as initWebgl } from "./webgl.js";
-// import { sierpinski as sierpinskiJs } from "./sierpinski.js";
+import { sierpinski as sierpinskiJs } from "./sierpinski.js";
 
 export async function main() {
   let now = Date.now();
