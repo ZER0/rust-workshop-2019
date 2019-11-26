@@ -1,6 +1,7 @@
 use crate::math::Vec3;
 
 pub fn sierpinski(level: u32) -> Vec<f32> {
+    println!("Generating sierpinski tetrahedron with level {} in Rust", level);
     let mut vertices = Vec::new();
     generate_tetrahedron(
         Vec3::new(0.0, 0.0, 1.0),
