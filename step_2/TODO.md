@@ -1,6 +1,6 @@
 # Step 2
 
-* In the file `/step_2/src/wasm.rs`:
+* In the file `/step_2/src/lib.rs`:
   
   * Replace the following lines:
 
@@ -43,8 +43,20 @@
 
   * Replace the following line:
 
-          env: { alert }
+        env: { alert }
 
   * With:
 
-          env: { console_log: consoleLog }
+        env: { console_log: consoleLog }
+
+
+* In the file `/step_2/static/wasm.js`:
+
+  * Replace the following line:
+
+        return result.instance.exports;
+
+  * With:
+
+        let { exports } = result.instance;
+        return exports;
