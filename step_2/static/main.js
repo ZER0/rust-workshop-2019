@@ -7,6 +7,7 @@ export async function main() {
     "/rust_workshop/target/wasm32-unknown-unknown/release/step_2_wasm.wasm"
   );
   sierpinskiWasm(8);
+  /*
   let now = Date.now();
   let vertices = sierpinskiJs(8);
   console.log(Date.now() - now);
@@ -17,6 +18,7 @@ export async function main() {
     render();
     requestAnimationFrame(frame);
   });
+  */
 }
 
 main();
