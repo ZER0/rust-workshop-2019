@@ -1,7 +1,11 @@
+import { init as initWasm  } from "./wasm.js";
 import { init as initWebgl } from "./webgl.js";
 import { sierpinski as sierpinskiJs } from "./sierpinski.js";
 
 export async function main() {
+  let { sierpinski: sierpinskiWasm } = await initWasm("/rust_workshop/target/wasm32-unknown-unknown/release/step_1.wasm");
+  sierpinskiWasm(8);
+  /*
   let now = Date.now();
   let vertices = sierpinskiJs(8);
   console.log(Date.now() - now);
@@ -12,6 +16,7 @@ export async function main() {
     render();
     requestAnimationFrame(frame);
   });
+  */
 }
 
 main();

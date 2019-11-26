@@ -4,6 +4,5 @@ export async function init(url) {
   let result = await WebAssembly.instantiate(buffer, {
     env: { alert }
   });
-  let { exports } = result.instance;
-  return { sierpinski: exports.sierpinski };
+  return result.instance.exports;
 }
