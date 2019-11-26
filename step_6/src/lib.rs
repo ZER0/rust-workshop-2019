@@ -1,7 +1,15 @@
-use crate::sierpinski;
+#![allow(dead_code)]
+
+#[macro_use]
+mod macros;
+
+mod math;
+mod sierpinski;
+
 use std::mem;
 
 extern "C" {
+    #[allow(dead_code)]
     pub fn console_log(data: u32, len: u32);
 }
 
@@ -25,3 +33,4 @@ unsafe fn vec_f32_into_js(mut vec: Vec<f32>) -> u32 {
     mem::forget(vec);
     Box::into_raw(raw_parts) as u32
 }
+

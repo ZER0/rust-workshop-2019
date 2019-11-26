@@ -2,6 +2,7 @@ use crate::sierpinski;
 use std::mem;
 
 extern "C" {
+    #[allow(dead_code)]
     pub fn console_log(data: u32, len: u32);
 }
 
