@@ -1,4 +1,5 @@
 [workspace]
 members = [
-    "step_1"
+    "step_5",
+    "step_6",
 ]
