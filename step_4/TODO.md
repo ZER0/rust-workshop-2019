@@ -1,71 +1,52 @@
-* In `/step_4/src/lib.rs', add the following lines:
- 
-      pub unsafe extern "C" fn vec_f32_into_js(mut vec: Vec<f32>) -> u32 {
-          let raw_parts = Box::new([
-              vec.as_mut_ptr() as u32,
-              vec.len() as u32,
-              vec.capacity() as u32,
-          ]);
-          mem::forget(vec);
-          Box::into_raw(raw_parts) as u32
+* In the file `/step_3/src/lib.rs`:
+
+  * Replace the following line::
+
+        extern "C" fn sierpinski(level: u32) {
+
+  * With:
+
+        extern "C" fn sierpinski(level: u32) -> u32 {
+
+* In the file `/step_3/src/lib.rs`, in the function `sierpinski`, add the following line at the end:
+
+      Box::into_raw(Box::new([1, 2, 3])) as u32
+
+* In the file `/step_3/src/lib.rs`, add the following lines:
+
+      #[no_mangle]
+      pub unsafe extern "C" fn free_values(values: u32) {
+          Box::from_raw(values as *mut [u32; 3]);
       }
 
-* In `/step_4/src/lib.rs`:
+* In the file `/step_3/static/wasm.js`, add the following lines:
+
+      function sierpinski(level) {
+        let valuesPtr = exports.sierpinski(level);
+        let uint32Memory = new Uint32Array(exports.memory.buffer);
+        let value_0 = uint32Memory[valuesPtr / 4 + 0];
+        let value_1 = uint32Memory[valuesPtr / 4 + 1];
+        let value_2 = uint32Memory[valuesPtr / 4 + 2];
+        exports.free_values(valuesPtr);
+        return [value_0, value_1, value_2];
+      }
+
+* In the file `/step_3/static/wasm.js`:
 
   * Replace the following line:
-  
-        Box::into_raw(Box::new([1, 2, 3])) as u32
+   
+        return exports;
 
   * With:
   
-        return unsafe {
-            vec_f32_into_js(vec![
-                -0.5, -0.5, 0.0, 0.5, -0.5, 0.0, -0.5, 0.5, 0.0, -0.5, 0.5, 0.0, 0.5, -0.5, 0.0, 0.5,
-                0.5, 0.0,
-            ])
-        };
+        return { sierpinski };
 
-* In `/step_4/src/lib.rs`:
+* In the file `/step_3/static/main.js`:
 
-  * Replace the following lines:
-        
-        #[no_mangle]
-        pub unsafe extern "C" fn free_values(values: u32) {
-            Box::from_raw(values as *mut [u32; 3]);
-        }
-
-  * with:
-
-        #[no_mangle]
-        pub unsafe extern "C" fn free_vec_f32(raw_parts: u32) {
-            let [ptr, length, capacity] = *Box::from_raw(raw_parts as *mut [u32; 3]);
-            Vec::from_raw_parts(ptr as *mut f32, length as usize, capacity as usize);
-        }
-
-* In `/step_4/static/wasm.js`:
-
-  * Replace the following lines:
-    
-        function sierpinski(level) {
-          let valuesPtr = exports.sierpinski(level);
-          let uint32Memory = new Uint32Array(exports.memory.buffer);
-          let value_0 = uint32Memory[valuesPtr / 4 + 0];
-          let value_1 = uint32Memory[valuesPtr / 4 + 1];
-          let value_2 = uint32Memory[valuesPtr / 4 + 2];
-          exports.free_values(valuesPtr);
-          return [value_0, value_1, value_2];
-        }
+  * Replace the following line:
+   
+        sierpinskiWasm(8);
 
   * With:
-    
-        function sierpinski(level) {
-          let rawPartsPtr = exports.sierpinski(level);
-          let int32Memory = new Int32Array(exports.memory.buffer);
-          let ptr = int32Memory[rawPartsPtr / 4 + 0];
-          let len = int32Memory[rawPartsPtr / 4 + 1];
-          let capacity = int32Memory[rawPartsPtr / 4 + 2];
-          let float32Memory = new Float32Array(exports.memory.buffer);
-          let result = float32Memory.subarray(ptr / 4, ptr / 4 + len).slice();
-          exports.free_vec_f32(rawPartsPtr);
-          return result;
-        }
+  
+        console.log(sierpinskiWasm(8));

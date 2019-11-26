@@ -1,56 +1,18 @@
-# Step 1
+# Step 0
 
-* In the file `/step_1/src/lib.rs`, add the following lines:
+* In the file `/Cargo.toml`, add `step_0` to `workspace.members`.
+
+* In the directory `/step_0/`, run the following command:
   
-      #![allow(dead_code)]
+      cargo init --lib
 
-      extern "C" {
-          fn alert(level: u32);
-      }
+* In the file `/step_0/Cargo.toml`, change `package.name` to `step_0_wasm`.
+  
+* In the file `/step_0/Cargo.toml`, add the following lines:
 
-      #[no_mangle]
-      extern "C" fn sierpinski(level: u32) {
-          unsafe {
-              alert(level);
-          }
-      }
+      [lib]
+      crate_type = ["cdylib"]
 
-* In the file `/step_1/static/wasm.js`, add the following lines:
+* In the directory `/step_0/static`, create the following new files:
 
-      export async function init(url) {
-        let response = await fetch(url);
-        let buffer = await response.arrayBuffer();
-        let result = await WebAssembly.instantiate(buffer, {
-            env: { alert }
-        });
-        return result.instance.exports;
-      }
-
-* In the file `/static/main.js`, add the following line:
-
-      import { init as initWasm } from "./wasm.js";
-
-* In the file `/step_1/static/main.js`:
-
-  * Replace the following lines:
-
-        export async function main() {
-          let now = Date.now();
-          let vertices = sierpinskiJs(8);
-          console.log(Date.now() - now);
-          let canvas = document.getElementById("canvas");
-          let gl = canvas.getContext("webgl");
-          let { render } = initWebgl(gl, vertices);
-          requestAnimationFrame(function frame() {
-            render();
-            requestAnimationFrame(frame);
-          });
-        }
-
-  * With:
-
-        export async function main() {
-          let { sierpinski: sierpinskiWasm } = await initWasm("/rust_workshop/target/wasm32-unknown-unknown/release/step_1_wasm.wasm"
-          );
-          sierpinskiWasm(8);
-        }
+  * `wasm.js`

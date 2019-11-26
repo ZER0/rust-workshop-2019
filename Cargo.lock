@@ -20,3 +20,7 @@ version = "0.1.0"
 name = "step_6_wasm"
 version = "0.1.0"
 
+[[package]]
+name = "step_7_wasm"
+version = "0.1.0"
+

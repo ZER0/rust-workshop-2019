@@ -24,13 +24,14 @@ const FRAGMENT_SHADER_SOURCE = `
 `;
 
 export function init(gl, vertices) {
-  function render(currentTime) {
+  function render() {
+    let currentTime = Date.now();
     let deltaTime = currentTime - previousTime;
     previousTime = currentTime;
     mat4.rotate(
       modelViewMatrix,
       modelViewMatrix,
-      (deltaTime * 0.2 * Math.PI) / 1000.0,
+      deltaTime * 0.2 * Math.PI / 1000.0,
       vec3.fromValues(1.0, 2.0, 3.0)
     );
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -80,7 +81,7 @@ export function init(gl, vertices) {
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
-  let previousTime = performance.now();
+  let previousTime = Date.now();
   let modelViewMatrix = mat4.create();
   return { render };
 }

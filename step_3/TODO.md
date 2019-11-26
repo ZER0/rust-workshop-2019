@@ -1,52 +1,67 @@
-* In the file `/step_3/src/lib.rs`:
+# Step 2
 
-  * Replace the following line::
+* In the file `/step_2/src/lib.rs`:
+  
+  * Replace the following lines:
 
+        extern "C" {
+            fn alert(level: u32);
+        }
+
+        #[no_mangle]
         extern "C" fn sierpinski(level: u32) {
+            unsafe {
+                alert(level);
+            }
+        }
+
+  * With:
+  
+        extern "C" {
+            fn console_log(data: u32, len: u32);
+        }
+
+        #[no_mangle]
+        extern "C" fn sierpinski(level: u32) {
+            println!(
+                "Generating Sierpinski tetrahedron with level {} in Rust",
+                level
+            );
+        }
+
+* In the file `/step_2/src/lib.rs`, add the following lines:
+
+      #![macro_use]
+      mod macros;
+
+* In the file `/step_2/static/wasm.js`, in the function `main`, add the following lines:
+
+      function consoleLog(data, len) {
+        console.log(
+          decoder.decode(new Uint8Array(exports.memory.buffer, data, len))
+        );
+      }
+
+      let decoder = new TextDecoder("utf-8", { ignoreBOM: true, fatal: true });
+
+* In the file `/step_2/static/wasm.js`:
+
+  * Replace the following line:
+
+        env: { alert }
 
   * With:
 
-        extern "C" fn sierpinski(level: u32) -> u32 {
+        env: { console_log: consoleLog }
 
-* In the file `/step_3/src/lib.rs`, in the function `sierpinski`, add the following line at the end:
 
-      Box::into_raw(Box::new([1, 2, 3])) as u32
-
-* In the file `/step_3/src/lib.rs`, add the following lines:
-
-      #[no_mangle]
-      pub unsafe extern "C" fn free_values(values: u32) {
-          Box::from_raw(values as *mut [u32; 3]);
-      }
-
-* In the file `/step_3/static/wasm.js`, add the following lines:
-
-      function sierpinski(level) {
-        let valuesPtr = exports.sierpinski(level);
-        let uint32Memory = new Uint32Array(exports.memory.buffer);
-        let value_0 = uint32Memory[valuesPtr / 4 + 0];
-        let value_1 = uint32Memory[valuesPtr / 4 + 1];
-        let value_2 = uint32Memory[valuesPtr / 4 + 2];
-        exports.free_values(valuesPtr);
-        return [value_0, value_1, value_2];
-      }
-
-* In the file `/step_3/static/wasm.js`:
+* In the file `/step_2/static/wasm.js`:
 
   * Replace the following line:
-   
+
+        return result.instance.exports;
+
+  * With:
+
+        let { exports } = result.instance;
         return exports;
-
-  * With:
-  
-        return { sierpinski };
-
-* In the file `/step_3/static/main.js`:
-
-  * Replace the following line:
-   
-        sierpinskiWasm(8);
-
-  * With:
-  
-        console.log(sierpinskiWasm(8));

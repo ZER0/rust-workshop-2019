@@ -1,58 +1,71 @@
-* In the file `/step_5/src/lib.rs`, add the following lines:
+* In `/step_4/src/lib.rs', add the following lines:
+ 
+      pub unsafe extern "C" fn vec_f32_into_js(mut vec: Vec<f32>) -> u32 {
+          let raw_parts = Box::new([
+              vec.as_mut_ptr() as u32,
+              vec.len() as u32,
+              vec.capacity() as u32,
+          ]);
+          mem::forget(vec);
+          Box::into_raw(raw_parts) as u32
+      }
+
+* In `/step_4/src/lib.rs`:
+
+  * Replace the following line:
   
-      mod math;
-      mod sierpinski;
+        Box::into_raw(Box::new([1, 2, 3])) as u32
 
-* In the file `/step_5/src/sierpinski.rs`, add the following lines:
+  * With:
+  
+        return unsafe {
+            vec_f32_into_js(vec![
+                -0.5, -0.5, 0.0, 0.5, -0.5, 0.0, -0.5, 0.5, 0.0, -0.5, 0.5, 0.0, 0.5, -0.5, 0.0, 0.5,
+                0.5, 0.0,
+            ])
+        };
+
+* In `/step_4/src/lib.rs`:
+
+  * Replace the following lines:
+        
+        #[no_mangle]
+        pub unsafe extern "C" fn free_values(values: u32) {
+            Box::from_raw(values as *mut [u32; 3]);
+        }
+
+  * with:
+
+        #[no_mangle]
+        pub unsafe extern "C" fn free_vec_f32(raw_parts: u32) {
+            let [ptr, length, capacity] = *Box::from_raw(raw_parts as *mut [u32; 3]);
+            Vec::from_raw_parts(ptr as *mut f32, length as usize, capacity as usize);
+        }
+
+* In `/step_4/static/wasm.js`:
+
+  * Replace the following lines:
     
-      use crate::math::Vec3;
+        function sierpinski(level) {
+          let valuesPtr = exports.sierpinski(level);
+          let uint32Memory = new Uint32Array(exports.memory.buffer);
+          let value_0 = uint32Memory[valuesPtr / 4 + 0];
+          let value_1 = uint32Memory[valuesPtr / 4 + 1];
+          let value_2 = uint32Memory[valuesPtr / 4 + 2];
+          exports.free_values(valuesPtr);
+          return [value_0, value_1, value_2];
+        }
 
-      pub fn sierpinski(level: u32) -> Vec<f32> {
-          println!(
-              "Generating Sierpinski tetrahedron with level {} in Rust",
-              level
-          );
-          let mut vertices = Vec::new();
-          generate_tetrahedron(
-              Vec3::new(0.0, 0.0, 1.0),
-              Vec3::new(f32::sqrt(8.0 / 9.0), 0.0, -1.0 / 3.0),
-              Vec3::new(-f32::sqrt(2.0 / 9.0), f32::sqrt(2.0 / 3.0), -1.0 / 3.0),
-              Vec3::new(-f32::sqrt(2.0 / 9.0), -f32::sqrt(2.0 / 3.0), -1.0 / 3.0),
-              level,
-              &mut vertices,
-          );
-          vertices
-      }
-
-      pub fn generate_tetrahedron(
-          p0: Vec3,
-          p1: Vec3,
-          p2: Vec3,
-          p3: Vec3,
-          level: u32,
-          vertices: &mut Vec<f32>,
-      ) {
-          if level == 0 {
-              generate_triangle(p0, p1, p2, vertices);
-              generate_triangle(p0, p2, p3, vertices);
-              generate_triangle(p0, p3, p1, vertices);
-              generate_triangle(p1, p2, p3, vertices);
-          } else {
-              let p01 = p0.lerp(p1, 0.5);
-              let p02 = p0.lerp(p2, 0.5);
-              let p03 = p0.lerp(p3, 0.5);
-              let p12 = p1.lerp(p2, 0.5);
-              let p23 = p2.lerp(p3, 0.5);
-              let p31 = p3.lerp(p1, 0.5);
-              generate_tetrahedron(p0, p01, p02, p03, level - 1, vertices);
-              generate_tetrahedron(p01, p31, p1, p12, level - 1, vertices);
-              generate_tetrahedron(p02, p12, p2, p23, level - 1, vertices);
-              generate_tetrahedron(p03, p23, p3, p31, level - 1, vertices);
-          }
-      }
-
-      fn generate_triangle(p0: Vec3, p1: Vec3, p2: Vec3, vertices: &mut Vec<f32>) {
-          vertices.extend([p0.x, p0.y, p0.z].iter().cloned());
-          vertices.extend([p1.x, p1.y, p1.z].iter().cloned());
-          vertices.extend([p2.x, p2.y, p2.z].iter().cloned());
-      }
+  * With:
+    
+        function sierpinski(level) {
+          let rawPartsPtr = exports.sierpinski(level);
+          let int32Memory = new Int32Array(exports.memory.buffer);
+          let ptr = int32Memory[rawPartsPtr / 4 + 0];
+          let len = int32Memory[rawPartsPtr / 4 + 1];
+          let capacity = int32Memory[rawPartsPtr / 4 + 2];
+          let float32Memory = new Float32Array(exports.memory.buffer);
+          let result = float32Memory.subarray(ptr / 4, ptr / 4 + len).slice();
+          exports.free_vec_f32(rawPartsPtr);
+          return result;
+        }

@@ -1,67 +1,56 @@
-# Step 2
+# Step 1
 
-* In the file `/step_2/src/lib.rs`:
+* In the file `/step_1/src/lib.rs`, add the following lines:
   
-  * Replace the following lines:
+      #![allow(dead_code)]
 
-        extern "C" {
-            fn alert(level: u32);
-        }
-
-        #[no_mangle]
-        extern "C" fn sierpinski(level: u32) {
-            unsafe {
-                alert(level);
-            }
-        }
-
-  * With:
-  
-        extern "C" {
-            fn console_log(data: u32, len: u32);
-        }
-
-        #[no_mangle]
-        extern "C" fn sierpinski(level: u32) {
-            println!(
-                "Generating Sierpinski tetrahedron with level {} in Rust",
-                level
-            );
-        }
-
-* In the file `/step_2/src/lib.rs`, add the following lines:
-
-      #![macro_use]
-      mod macros;
-
-* In the file `/step_2/static/wasm.js`, in the function `main`, add the following lines:
-
-      function consoleLog(data, len) {
-        console.log(
-          decoder.decode(new Uint8Array(exports.memory.buffer, data, len))
-        );
+      extern "C" {
+          fn alert(level: u32);
       }
 
-      let decoder = new TextDecoder("utf-8", { ignoreBOM: true, fatal: true });
+      #[no_mangle]
+      extern "C" fn sierpinski(level: u32) {
+          unsafe {
+              alert(level);
+          }
+      }
 
-* In the file `/step_2/static/wasm.js`:
+* In the file `/step_1/static/wasm.js`, add the following lines:
 
-  * Replace the following line:
-
-        env: { alert }
-
-  * With:
-
-        env: { console_log: consoleLog }
-
-
-* In the file `/step_2/static/wasm.js`:
-
-  * Replace the following line:
-
+      export async function init(url) {
+        let response = await fetch(url);
+        let buffer = await response.arrayBuffer();
+        let result = await WebAssembly.instantiate(buffer, {
+            env: { alert }
+        });
         return result.instance.exports;
+      }
+
+* In the file `/static/main.js`, add the following line:
+
+      import { init as initWasm } from "./wasm.js";
+
+* In the file `/step_1/static/main.js`:
+
+  * Replace the following lines:
+
+        export async function main() {
+          let now = Date.now();
+          let vertices = sierpinskiJs(8);
+          console.log(Date.now() - now);
+          let canvas = document.getElementById("canvas");
+          let gl = canvas.getContext("webgl");
+          let { render } = initWebgl(gl, vertices);
+          requestAnimationFrame(function frame() {
+            render();
+            requestAnimationFrame(frame);
+          });
+        }
 
   * With:
 
-        let { exports } = result.instance;
-        return exports;
+        export async function main() {
+          let { sierpinski: sierpinskiWasm } = await initWasm("/rust_workshop/target/wasm32-unknown-unknown/release/step_1_wasm.wasm"
+          );
+          sierpinskiWasm(8);
+        }
