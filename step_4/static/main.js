@@ -6,9 +6,8 @@ export async function main() {
   let { sierpinski: sierpinskiWasm } = await initWasm(
     "/rust_workshop/target/wasm32-unknown-unknown/release/step_4_wasm.wasm"
   );
-  sierpinskiWasm(8);
   let now = Date.now();
-  let vertices = sierpinskiJs(8);
+  let vertices = sierpinskiWasm(8);
   console.log(Date.now() - now);
   let canvas = document.getElementById("canvas");
   let gl = canvas.getContext("webgl");

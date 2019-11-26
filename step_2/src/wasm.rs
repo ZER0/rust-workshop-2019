@@ -1,7 +1,7 @@
 use crate::sierpinski;
 
 extern "C" {
-    pub fn console_log(data: u32, len: u32);
+    pub fn alert(level: u32);
 }
 
 #[no_mangle]
