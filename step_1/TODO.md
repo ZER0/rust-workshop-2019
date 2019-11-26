@@ -1,6 +1,6 @@
 # Step 1
 
-* In `/src/lib.rs`, add the following lines:
+* In the file `/step_1/src/lib.rs`, add the following lines:
   
       #![allow(dead_code)]
 
@@ -15,7 +15,7 @@
           }
       }
 
-* In `/static/wasm.js`, add the following lines:
+* In the file `/step_1/static/wasm.js`, add the following lines:
 
       export async function init(url) {
         let response = await fetch(url);
@@ -26,11 +26,11 @@
         return result.instance.exports;
       }
 
-* In `/static/main.js`, add the following line:
+* In the file `/static/main.js`, add the following line:
 
       import { init as initWasm } from "./wasm.js";
 
-* In `/static/main.js`:
+* In the file `/step_1/static/main.js`:
 
   * Replace the following lines:
 
