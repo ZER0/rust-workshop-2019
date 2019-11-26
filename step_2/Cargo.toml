@@ -5,6 +5,6 @@ authors = ["Eddy Bruel <ejpbruel@gmail.com>"]
 edition = "2018"
 
 [lib]
-crate_type = ["cdylib", "rlib"]
+crate_type = ["cdylib"]
 
 [dependencies]
