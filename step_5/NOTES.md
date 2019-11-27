@@ -1,20 +1,20 @@
 * In `/step_4/src/lib.rs', add the following lines:
  
-      pub unsafe extern "C" fn vec_f32_into_js(mut vec: Vec<f32>) -> u32 {
+      pub unsafe extern "C" fn vec_f32_into_js(mut vec: Vec<f32>) -> i32 {
           let raw_parts = Box::new([
-              vec.as_mut_ptr() as u32,
-              vec.len() as u32,
-              vec.capacity() as u32,
+              vec.as_mut_ptr() as i32,
+              vec.len() as i32,
+              vec.capacity() as i32,
           ]);
           mem::forget(vec);
-          Box::into_raw(raw_parts) as u32
+          Box::into_raw(raw_parts) as i32
       }
 
 * In `/step_4/src/lib.rs`:
 
   * Replace the following line:
   
-        Box::into_raw(Box::new([1, 2, 3])) as u32
+        Box::into_raw(Box::new([1, 2, 3])) as i32
 
   * With:
   
@@ -30,15 +30,15 @@
   * Replace the following lines:
         
         #[no_mangle]
-        pub unsafe extern "C" fn free_values(values: u32) {
-            Box::from_raw(values as *mut [u32; 3]);
+        pub unsafe extern "C" fn free_values(values: i32) {
+            Box::from_raw(values as *mut [i32; 3]);
         }
 
   * with:
 
         #[no_mangle]
-        pub unsafe extern "C" fn free_vec_f32(raw_parts: u32) {
-            let [ptr, length, capacity] = *Box::from_raw(raw_parts as *mut [u32; 3]);
+        pub unsafe extern "C" fn free_vec_f32(raw_parts: i32) {
+            let [ptr, length, capacity] = *Box::from_raw(raw_parts as *mut [i32; 3]);
             Vec::from_raw_parts(ptr as *mut f32, length as usize, capacity as usize);
         }
 

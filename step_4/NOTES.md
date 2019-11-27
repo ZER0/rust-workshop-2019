@@ -2,21 +2,21 @@
 
   * Replace the following line::
 
-        extern "C" fn sierpinski(level: u32) {
+        extern "C" fn sierpinski(level: i32) {
 
   * With:
 
-        extern "C" fn sierpinski(level: u32) -> u32 {
+        extern "C" fn sierpinski(level: i32) -> i32 {
 
 * In the file `/step_3/src/lib.rs`, in the function `sierpinski`, add the following line at the end:
 
-      Box::into_raw(Box::new([1, 2, 3])) as u32
+      Box::into_raw(Box::new([1, 2, 3])) as i32
 
 * In the file `/step_3/src/lib.rs`, add the following lines:
 
       #[no_mangle]
-      pub unsafe extern "C" fn free_values(values: u32) {
-          Box::from_raw(values as *mut [u32; 3]);
+      pub unsafe extern "C" fn free_values(values: i32) {
+          Box::from_raw(values as *mut [i32; 3]);
       }
 
 * In the file `/step_3/static/wasm.js`, add the following lines:

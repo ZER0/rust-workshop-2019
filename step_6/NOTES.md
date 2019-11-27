@@ -7,7 +7,7 @@
     
       use crate::math::Vec3;
 
-      pub fn sierpinski(level: u32) -> Vec<f32> {
+      pub fn sierpinski(level: i32) -> Vec<f32> {
           println!(
               "Generating Sierpinski tetrahedron with level {} in Rust",
               level
@@ -29,7 +29,7 @@
           p1: Vec3,
           p2: Vec3,
           p3: Vec3,
-          level: u32,
+          level: i32,
           vertices: &mut Vec<f32>,
       ) {
           if level == 0 {

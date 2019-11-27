@@ -5,11 +5,11 @@
   * Replace the following lines:
 
         extern "C" {
-            fn alert(level: u32);
+            fn alert(level: i32);
         }
 
         #[no_mangle]
-        extern "C" fn sierpinski(level: u32) {
+        extern "C" fn sierpinski(level: i32) {
             unsafe {
                 alert(level);
             }
@@ -18,11 +18,11 @@
   * With:
   
         extern "C" {
-            fn console_log(data: u32, len: u32);
+            fn console_log(data: i32, len: i32);
         }
 
         #[no_mangle]
-        extern "C" fn sierpinski(level: u32) {
+        extern "C" fn sierpinski(level: i32) {
             println!(
                 "Generating Sierpinski tetrahedron with level {} in Rust",
                 level
