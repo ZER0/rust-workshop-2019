@@ -1,0 +1,10 @@
+[package]
+name = "native"
+version = "0.1.0"
+authors = ["ZER0 <zer0.kaos@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+step_8_wasm = { path = "../step_8" }
+gl = "0.14.0"
+sdl2 = "0.32.2"
