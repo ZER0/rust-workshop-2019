@@ -15,7 +15,11 @@ extern "C" {
 
 #[no_mangle]
 pub extern "C" fn sierpinski(level: i32) -> i32 {
-    unsafe { vec_f32_into_js(sierpinski::sierpinski(level)) }
+    println!(
+        "Generating Sierpinski tetrahedron with level {} in Rust",
+        level
+    );
+    unsafe { vec_f32_into_js(sierpinski::sierpinski(level as u32)) }
 }
 
 #[no_mangle]
